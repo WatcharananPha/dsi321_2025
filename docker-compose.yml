@@ -1,19 +1,19 @@
-
-
 services:
-  btc-tracker:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: btc-tracker
-    restart: unless-stopped
-    volumes:
-      - ./btc_data:/app/data
+  lakefs-dev:
+    image: treeverse/lakefs:1.7.0
+    ports:
+      - 8001:8000
     environment:
-      - FETCH_INTERVAL=3600  # Set fetch interval in seconds (1 hour)
-      - SYMBOL=BTCUSDT      # Cryptocurrency to track
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+      LAKEFS_INSTALLATION_USER_NAME: "admin"
+      LAKEFS_INSTALLATION_ACCESS_KEY_ID: "dsi321-final-project-access"
+      LAKEFS_INSTALLATION_SECRET_ACCESS_KEY: "dsi321-final-secret-access"
+      LAKEFS_DATABASE_TYPE: "local"
+      LAKEFS_AUTH_ENCRYPT_SECRET_KEY: "wait"
+      LAKEFS_BLOCKSTORE_TYPE: "local"
+  jupyter:
+    container_name: jupyter
+    image: jupyter/minimal-notebook:latest
+    ports:
+      - 8888:8888
+
+    command: start-notebook.sh --NotebookApp.token='' --NotebookApp.allow_origin='*'
