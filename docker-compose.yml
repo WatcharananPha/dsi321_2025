@@ -1,19 +1,36 @@
-services:
-  lakefs-dev:
-    image: treeverse/lakefs:1.7.0
-    ports:
-      - 8001:8000
-    environment:
-      LAKEFS_INSTALLATION_USER_NAME: "admin"
-      LAKEFS_INSTALLATION_ACCESS_KEY_ID: "dsi321-final-project-access"
-      LAKEFS_INSTALLATION_SECRET_ACCESS_KEY: "dsi321-final-secret-access"
-      LAKEFS_DATABASE_TYPE: "local"
-      LAKEFS_AUTH_ENCRYPT_SECRET_KEY: "wait"
-      LAKEFS_BLOCKSTORE_TYPE: "local"
-  jupyter:
-    container_name: jupyter
-    image: jupyter/minimal-notebook:latest
-    ports:
-      - 8888:8888
+version: '3'
 
-    command: start-notebook.sh --NotebookApp.token='' --NotebookApp.allow_origin='*'
+services:
+  jupyter:
+    image: jupyter/datascience-notebook:latest
+    container_name: jupyter-notebook
+    ports:
+      - "8888:8888"
+    volumes:
+      - .:/home/jovyan/work
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+    command: start-notebook.sh --NotebookApp.token='' --NotebookApp.password=''
+
+  lakefs:
+    image: treeverse/lakefs:latest
+    container_name: lakefs-dev
+    ports:
+      - "8001:8000"
+    environment:
+      - LAKEFS_AUTH_ENCRYPT_SECRET_KEY=some-random-secret-string
+      - LAKEFS_DATABASE_TYPE=local
+      - LAKEFS_BLOCKSTORE_TYPE=local
+      - LAKEFS_BLOCKSTORE_LOCAL_PATH=/home/lakefs/data
+      - LAKEFS_LOGGING_LEVEL=INFO
+    volumes:
+      - lakefs_data:/home/lakefs/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  lakefs_data:
