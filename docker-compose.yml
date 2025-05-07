@@ -1,0 +1,19 @@
+
+
+services:
+  btc-tracker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: btc-tracker
+    restart: unless-stopped
+    volumes:
+      - ./btc_data:/app/data
+    environment:
+      - FETCH_INTERVAL=3600  # Set fetch interval in seconds (1 hour)
+      - SYMBOL=BTCUSDT      # Cryptocurrency to track
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
