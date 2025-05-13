@@ -1,0 +1,4 @@
+prefect
+pandas
+selenium
+webdriver-manager
