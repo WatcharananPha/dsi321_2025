@@ -1,60 +1,99 @@
 # EGAT Real-time Power Generation Scraper
 
-สคริปต์ Python นี้ทำหน้าที่ดึงข้อมูลการผลิตไฟฟ้าแบบเรียลไทม์จากเว็บไซต์การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย (กฟผ.) ที่ URL `https://www.sothailand.com/sysgen/egat/` โดยใช้ Selenium ในการโต้ตอบกับหน้าเว็บ และดึงข้อมูลจาก Console Log ของเบราว์เซอร์ ซึ่งเป็นที่ที่เว็บไซต์อัปเดตข้อมูลแบบไดนามิก ข้อมูลที่ดึงมาได้จะถูกบันทึกลงในไฟล์ CSV
+สคริปต์ Python นี้ทำหน้าที่ดึงข้อมูลการผลิตไฟฟ้าแบบเรียลไทม์จากเว็บไซต์การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย (กฟผ.) โดยใช้ Selenium ในการโต้ตอบกับหน้าเว็บ และดึงข้อมูลจาก Console Log ของเบราว์เซอร์
 
-สคริปต์ถูกออกแบบมาให้สามารถทำงานได้อย่างต่อเนื่อง เพื่อเก็บข้อมูลใหม่ตามช่วงเวลาที่กำหนด
+## โครงสร้างโปรเจค
+
+```
+.
+├── config/                         # ไฟล์การตั้งค่าต่างๆ
+│   ├── docker/                    # Docker configurations
+│   ├── logging/                   # การตั้งค่า logging
+│   └── path_config.py            # การกำหนดค่า path และ URL
+├── data_output/                   # ข้อมูลที่ได้จากการ scrape
+│   └── egat/
+├── src/                          # โค้ดหลัก
+│   ├── backend/                  # ส่วนประมวลผลหลัก
+│   │   ├── scraping/            # โค้ดสำหรับ scraping
+│   │   ├── pipeline/            # กระบวนการทำงาน
+│   │   └── validation/          # การตรวจสอบข้อมูล
+│   └── frontend/                # ส่วนแสดงผล
+└── test/                        # Unit tests
+```
 
 ## คุณสมบัติเด่น
 
 *   **ดึงข้อมูลแบบเรียลไทม์:** ดึงข้อมูลตัวเลขการผลิตไฟฟ้าล่าสุดและอุณหภูมิ
-*   **วิเคราะห์ Console Log:** มีวิธีการเฉพาะในการดึงข้อมูลจากข้อความใน JavaScript Console Log ทำให้ไม่ต้องจัดการกับโครงสร้าง HTML ที่ซับซ้อน
-*   **ทำงานแบบ Headless:** ใช้ Selenium กับ Chrome ในโหมด Headless (ไม่มีหน้าจอ) เพื่อการทำงานเบื้องหลังอย่างมีประสิทธิภาพ
-*   **จัดการ ChromeDriver อัตโนมัติ:** ผสานการทำงานกับ `webdriver-manager` เพื่อดาวน์โหลดและจัดการเวอร์ชันของ ChromeDriver ให้ถูกต้องโดยอัตโนมัติ
-*   **บันทึกข้อมูลเป็น CSV:** ต่อท้ายข้อมูลใหม่ลงในไฟล์ CSV (สร้างไฟล์ใหม่หากยังไม่มี) พร้อมทั้งบันทึกเวลาที่ทำการดึงข้อมูล (timestamp)
-*   **ดึงข้อมูลต่อเนื่อง:** สามารถทำงานไปเรื่อยๆ เพื่อเก็บข้อมูลตามช่วงเวลาที่ผู้ใช้กำหนด
-*   **การบันทึก Log:** มีการบันทึก Log การทำงานพื้นฐานเพื่อติดตามการทำงานของสคริปต์และปัญหาที่อาจเกิดขึ้น
+*   **วิเคราะห์ Console Log:** ดึงข้อมูลจาก JavaScript Console Log โดยตรง
+*   **ทำงานแบบ Headless:** ใช้ Selenium ในโหมด Headless
+*   **Docker Support:** รองรับการทำงานผ่าน Docker
+*   **Modular Design:** แยกส่วนการทำงานเป็นโมดูลชัดเจน
+*   **Logging System:** ระบบ logging ที่ปรับแต่งได้
+*   **Data Validation:** มีระบบตรวจสอบความถูกต้องของข้อมูล
 
-## หลักการทำงาน
+## การติดตั้ง
 
-เว็บไซต์ `https://www.sothailand.com/sysgen/egat/` ดูเหมือนจะอัปเดตข้อมูลที่แสดงผล (กำลังการผลิตปัจจุบันหน่วยเป็น MW และอุณหภูมิ) ผ่าน JavaScript ซึ่ง JavaScript นี้ก็จะส่งข้อความการอัปเดตไปยัง Console ของเบราว์เซอร์ด้วย สคริปต์นี้ใช้ประโยชน์จากพฤติกรรมดังกล่าว:
+1. **Clone Repository:**
+```bash
+git clone <repository_url>
+cd <repository_directory>
+```
 
-1.  **เริ่มต้น WebDriver:** ตั้งค่าและเปิดเบราว์เซอร์ Chrome ในโหมด Headless ผ่าน Selenium และเปิดใช้งาน `goog:loggingPrefs` เพื่อเก็บ Log จาก Console ของเบราว์เซอร์
-2.  **เปิด URL เป้าหมาย:** เปิดหน้าเว็บ กฟผ. ที่ระบุ
-3.  **รอข้อมูล:** หยุดรอสักครู่เพื่อให้หน้าเว็บโหลดสมบูรณ์และ JavaScript ทำงาน
-4.  **ดึงข้อมูลจาก Console:** เรียกดู Log จาก Console ของเบราว์เซอร์ และค้นหาข้อความที่มีรูปแบบ `updateMessageArea:`
-5.  **แยกส่วนข้อมูล:** ใช้ Regular Expression เพื่อแยกส่วนข้อมูลที่เกี่ยวข้อง (เช่น รหัสวันที่, เวลา, ค่า MW ปัจจุบัน, อุณหภูมิ) ออกจากข้อความ Log ที่ตรงกัน
-6.  **บันทึกลง CSV:** จัดรูปแบบข้อมูลที่ดึงมาได้พร้อมกับ `scrape_time` (เวลาที่ดึงข้อมูล) ให้อยู่ในรูป Dictionary และบันทึกเป็นแถวใหม่ต่อท้ายไฟล์ CSV ที่กำหนด
-7.  **ทำงานวนซ้ำ (ทางเลือก):** หากมีการเรียกใช้ `scrape_continuously` สคริปต์จะทำซ้ำขั้นตอนที่ 2-6 ตามช่วงเวลาที่กำหนด
-8.  **ปิด WebDriver:** ปิดการทำงานของเบราว์เซอร์ Driver อย่างถูกต้องเมื่อสคริปต์ทำงานเสร็จหรือถูกขัดจังหวะ
+2. **ติดตั้ง Dependencies:**
+```bash
+pip install -r requirements.txt
+```
 
-## สิ่งที่ต้องมีก่อนเริ่มใช้งาน
+3. **ตั้งค่า Environment:**
+```bash
+cp .env.example .env
+# แก้ไขค่าใน .env ตามต้องการ
+```
 
-*   Python 3.7 ขึ้นไป
-*   ติดตั้งเบราว์เซอร์ Google Chrome
+## การใช้งาน
 
-## การติดตั้งและตั้งค่า
+### แบบ Python Script
+```bash
+python src/backend/pipeline/run_egat_scraper.py
+```
 
-1.  **Clone Repository (ถ้ามี) หรือบันทึกไฟล์สคริปต์:**
-    ```bash
-    # ถ้าเป็น Repository
-    # git clone <repository_url>
-    # cd <repository_directory>
-    ```
+### แบบ Docker
+```bash
+docker-compose up -d
+```
 
-2.  **สร้าง Virtual Environment (แนะนำ):**
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # สำหรับ Windows: venv\Scripts\activate
-    ```
+## การพัฒนา
 
-3.  **ติดตั้ง Package ที่จำเป็น:**
-    สร้างไฟล์ `requirements.txt` โดยมีเนื้อหาดังนี้:
-    ```txt
-    pandas
-    selenium
-    webdriver-manager
-    ```
-    จากนั้นรันคำสั่ง:
-    ```bash
-    pip install -r requirements.txt
-    ```
+1. **สร้าง Virtual Environment:**
+```bash
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+```
+
+2. **ติดตั้ง Development Dependencies:**
+```bash
+pip install -r requirements-dev.txt
+```
+
+## การทดสอบ
+```bash
+python -m pytest
+```
+
+## Configuration
+
+การตั้งค่าหลักอยู่ในไฟล์ต่างๆ ดังนี้:
+- `.env` - ค่า environment variables
+- `config/path_config.py` - การกำหนด path และ URL
+- `config/logging/modern_log.py` - การตั้งค่า logging
+
+## การจัดการข้อมูล
+
+ข้อมูลที่ scrape ได้จะถูกเก็บที่:
+```
+data_output/egat/egat_realtime_power.csv
+```
+
+## License
+
+[ระบุ License ที่ใช้]
