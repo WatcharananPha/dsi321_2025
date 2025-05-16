@@ -34,7 +34,7 @@ def detect_anomalies(data, contamination=0.1):
         contamination=contamination,
         random_state=42,
         n_estimators=100
-    )
+    )   
     predictions = iso_forest.fit_predict(scaled_data)
     return predictions == -1
 
