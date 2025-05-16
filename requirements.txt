@@ -1,4 +1,5 @@
-prefect
+prefect>=2.14.0,<3.0.0
 pandas
 selenium
 webdriver-manager
+streamlit

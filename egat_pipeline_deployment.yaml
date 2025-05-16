@@ -1,0 +1,42 @@
+name: egat-power-realtime
+description: null
+version: 841fd504e98cecab52a17b28113e5c79
+
+work_queue_name: data-ingestion
+work_pool_name: null
+tags: []
+parameters: {}
+schedule: null
+schedules:
+- schedule:
+    interval: 300.0
+    anchor_date: '2025-05-14T21:54:11.664195+00:00'
+    timezone: UTC
+  active: true
+is_schedule_active: null
+infra_overrides: {}
+infrastructure:
+  type: process
+  env: {}
+  labels: {}
+  name: null
+  command: null
+  stream_output: true
+  working_dir: null
+  block_type_slug: process
+  _block_type_slug: process
+
+flow_name: egat-realtime-pipeline
+manifest_path: null
+storage: null
+path: C:\Users\kongl\Documents\dsi321_2025
+entrypoint: prefect_flow.py:egat_realtime_pipeline
+parameter_openapi_schema:
+  title: Parameters
+  type: object
+  properties: {}
+  required: null
+  definitions: null
+timestamp: '2025-05-14T21:54:11.668778+00:00'
+triggers: []
+enforce_parameter_schema: null
