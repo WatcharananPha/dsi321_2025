@@ -222,7 +222,7 @@ def egat_data_pipeline():
     # Environment configuration
     ACCESS_KEY = os.getenv("LAKEFS_ACCESS_KEY_ID", "access_key")
     SECRET_KEY = os.getenv("LAKEFS_SECRET_ACCESS_KEY", "secret_key")
-    LAKEFS_ENDPOINT = os.getenv("LAKEFS_ENDPOINT_URL", "http://lakefs-dev:8000/")
+    LAKEFS_ENDPOINT = os.getenv("LAKEFS_ENDPOINT_URL", "http://localhost:8001/")
     REPO_NAME = "dataset"
     BRANCH_NAME = "main"
     TARGET_PARQUET_FILE_PATH = "egat_datascraping/egat_realtime_power_history.parquet"
