@@ -7,21 +7,21 @@
 ## โครงสร้างโปรเจค
 
 ```
-.
-├── Dockerfile                 # For the Prefect agent/worker
-├── docker-compose.yml         # To run MinIO, lakeFS, and Prefect Agent
-├── requirements.txt           # Python dependencies
-├── .env.example              # Example environment variables
-├── src
-│   ├── scraping
-│   │   └── scraper_egat.py   # Adapted EGAT scraper
-│   ├── validation
-│   │   └── validate.py       # Optional: Data validation logic
-│   ├── load
-│   │   └── lakefs_loader.py  # Logic to interact with lakeFS
-│   └── pipeline
-│       └── egat_scrape_flow.py # The Prefect flow
-└── README.md                 # Instructions (like this one)
+egat-scraper-project/
+├── src/
+│   ├── __init__.py
+│   ├── scraper/
+│   │   ├── __init__.py
+│   │   └── egat_scraper.py        # Contains EGATRealTimeScraper class
+│   ├── config.py                  # Configuration settings
+│   ├── tasks.py                   # Prefect task definitions
+│   └── flows.py                   # Prefect flow definitions
+├── notebooks/
+│   └── run_scraper_and_save_to_lakefs.ipynb  # Your original notebook for reference
+├── run_scheduled_flow.py          # Script to run/deploy the Prefect flow
+├── requirements.txt               # Project dependencies
+├── docker-compose.yml             # Existing docker-compose
+└── .env                           # For environment variables (you'll create this)
 ```
 
 ## คุณสมบัติเด่น
