@@ -2,7 +2,7 @@ services:
   lakefs-dev:
     image: treeverse/lakefs:1.7.0
     ports:
-      - "8001:8000"
+      - "8001:8000" 
     environment:
       LAKEFS_INSTALLATION_USER_NAME: "admin"
       LAKEFS_INSTALLATION_ACCESS_KEY_ID: "access_key"
@@ -26,12 +26,12 @@ services:
       - ./jupyter_app:/home/jovyan/work
     environment:
       JUPYTER_ENABLE_LAB: "yes"
+      LAKEFS_ENDPOINT_URL: "http://lakefs-dev:8000"  # Use the internal hostname for lakeFS
     command: start-notebook.sh --NotebookApp.token='' --NotebookApp.notebook_dir='/home/jovyan/work'
     depends_on:
       - lakefs-dev
     networks:
       - data_network
-
 
 volumes:
   lakefs_data:
