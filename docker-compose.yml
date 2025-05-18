@@ -1,0 +1,40 @@
+services:
+  lakefs-dev:
+    image: treeverse/lakefs:1.7.0
+    ports:
+      - "8001:8000"
+    environment:
+      LAKEFS_INSTALLATION_USER_NAME: "admin"
+      LAKEFS_INSTALLATION_ACCESS_KEY_ID: "access_key"
+      LAKEFS_INSTALLATION_SECRET_ACCESS_KEY: "secret_key"
+      LAKEFS_DATABASE_TYPE: "local"
+      LAKEFS_AUTH_ENCRYPT_SECRET_KEY: "my-super-secret-key-for-encryption"
+      LAKEFS_BLOCKSTORE_TYPE: "local"
+    volumes:
+      - lakefs_data:/data
+    networks:
+      - data_network
+
+  jupyter:
+    build:
+      context: ./jupyter_app
+      dockerfile: Dockerfile
+    container_name: jupyter_scraper
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./jupyter_app:/home/jovyan/work
+    environment:
+      JUPYTER_ENABLE_LAB: "yes"
+    command: start-notebook.sh --NotebookApp.token='' --NotebookApp.notebook_dir='/home/jovyan/work'
+    depends_on:
+      - lakefs-dev
+    networks:
+      - data_network
+
+volumes:
+  lakefs_data:
+
+networks:
+  data_network:
+    driver: bridge
