@@ -1,0 +1,12 @@
+pandas
+prefect==3.4.1
+lakefs==0.10.0
+lakefs-client==1.44.0
+lakefs-sdk==1.54.0
+lakefs-spec==0.11.3
+selenium
+webdriver-manager
+python-dotenv
+fsspec
+s3fs
+pyarrow
