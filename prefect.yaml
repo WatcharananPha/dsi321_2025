@@ -10,14 +10,14 @@ pull:
       branch: main
 
 deployments:
-  - name: egat-5min-scrape-deployment
-    description: "Scrapes EGAT realtime power data every 5 minutes and stores to LakeFS."
+  - name: egat-3min-scrape-deployment
+    description: "Scrapes EGAT realtime power data every 3 minutes and stores to LakeFS."
     version: "1.0"
     entrypoint: egat_pipeline.py:egat_data_pipeline
     work_pool:
       name: default-agent-pool
       work_queue_name: default
     schedule:
-      interval: 300
+      interval: 180
     parameters: {}
     tags: ["egat", "scraping", "lakefs"]
