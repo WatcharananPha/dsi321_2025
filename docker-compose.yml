@@ -15,26 +15,38 @@ services:
     networks:
       - data_network
 
-  jupyter:
+  prefect-agent:
     build:
-      context: ./jupyter_app
+      context: ./test-scraping
       dockerfile: Dockerfile
-    container_name: jupyter_scraper
-    ports:
-      - "8888:8888"
+    container_name: prefect_agent
     volumes:
-      - ./jupyter_app:/home/jovyan/work
+      - ./:/app
     environment:
-      JUPYTER_ENABLE_LAB: "yes"
-      LAKEFS_ENDPOINT_URL: "http://lakefs-dev:8000" # Use the internal hostname for lakeFS
-    command: start-notebook.sh --NotebookApp.token='' --NotebookApp.notebook_dir='/home/jovyan/work'
+      - PREFECT_API_URL=http://prefect-server:4200/api
+      - LAKEFS_ACCESS_KEY_ID=access_key
+      - LAKEFS_SECRET_ACCESS_KEY=secret_key
+      - LAKEFS_ENDPOINT_URL=http://lakefs-dev:8000
     depends_on:
       - lakefs-dev
+      - prefect-server
+    networks:
+      - data_network
+
+  prefect-server:
+    image: prefecthq/prefect:3.4.1-python3.11
+    container_name: prefect_server
+    ports:
+      - "4200:4200"
+    volumes:
+      - prefect_data:/root/.prefect
+    command: prefect server start --host 0.0.0.0
     networks:
       - data_network
 
 volumes:
   lakefs_data:
+  prefect_data:
 
 networks:
   data_network:
