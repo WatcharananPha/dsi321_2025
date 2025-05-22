@@ -7,21 +7,23 @@
 ## โครงสร้างโปรเจค
 
 ```
-egat-scraper-project/
-├── src/
-│   ├── __init__.py
-│   ├── scraper/
-│   │   ├── __init__.py
-│   │   └── egat_scraper.py        # Contains EGATRealTimeScraper class
-│   ├── config.py                  # Configuration settings
-│   ├── tasks.py                   # Prefect task definitions
-│   └── flows.py                   # Prefect flow definitions
-├── notebooks/
-│   └── run_scraper_and_save_to_lakefs.ipynb  # Your original notebook for reference
-├── run_scheduled_flow.py          # Script to run/deploy the Prefect flow
-├── requirements.txt               # Project dependencies
-├── docker-compose.yml             # Existing docker-compose
-└── .env                           # For environment variables (you'll create this)
+DSI321_2025/
+├── _pycache_/
+│   └── egat_pipeline.cpython-312.pyc
+├── parquet/
+│   └── egat_realtime_power_history.parquet
+├── test-scraping/
+│   ├── .ipynb_checkpoints/
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   └── run_scraper_and_save_to_lakefs.ipynb
+├── UI/
+│   └── streamlit_app.py
+├── docker-compose.yml
+├── egat_pipeline.py
+├── egat_realtime_power.csv
+├── prefect.yaml
+└── README.md
 ```
 
 ## คุณสมบัติเด่น
