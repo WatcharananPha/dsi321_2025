@@ -17,13 +17,13 @@ services:
 
   jupyter:
     build:
-      context: ./jupyter_app
+      context: ./test-scraping
       dockerfile: Dockerfile
     container_name: jupyter_scraper
     ports:
       - "8888:8888"
     volumes:
-      - ./jupyter_app:/home/jovyan/work
+      - ./test-scraping:/home/jovyan/work
     environment:
       JUPYTER_ENABLE_LAB: "yes"
       LAKEFS_ENDPOINT_URL: "http://lakefs-dev:8000"  # Use the internal hostname for lakeFS
