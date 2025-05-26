@@ -18,6 +18,6 @@ deployments:
       name: default-agent-pool
       work_queue_name: default
     schedule:
-      interval: 180
+      interval: 180 
     parameters: {}
     tags: ["egat", "scraping", "lakefs"]
