@@ -2,7 +2,7 @@ services:
   lakefs-dev:
     image: treeverse/lakefs:1.7.0
     ports:
-      - "8001:8000" 
+      - "8001:8000"
     environment:
       LAKEFS_INSTALLATION_USER_NAME: "admin"
       LAKEFS_INSTALLATION_ACCESS_KEY_ID: "access_key"
@@ -15,6 +15,44 @@ services:
     networks:
       - data_network
 
+  prefect-server:
+    image: prefecthq/prefect:3.4.1-python3.11
+    command: prefect server start --host 0.0.0.0
+    ports:
+      - "4200:4200"
+    environment:
+      PREFECT_API_URL: "http://prefect-server:4200/api"
+      PREFECT_SERVER_API_HOST: "0.0.0.0"
+      PREFECT_UI_URL: "http://localhost:4200"
+    volumes:
+      - prefect_data:/root/.prefect
+    networks:
+      - data_network
+
+  prefect-worker:
+    build:
+      context: ./test-scraping
+      dockerfile: Dockerfile
+    command: >
+      bash -c "
+      prefect config set PREFECT_API_URL=http://prefect-server:4200/api &&
+      prefect worker start --pool default-agent-pool --work-queue default
+      "
+    environment:
+      PREFECT_API_URL: "http://prefect-server:4200/api"
+      LAKEFS_ACCESS_KEY_ID: "access_key"
+      LAKEFS_SECRET_ACCESS_KEY: "secret_key"
+      LAKEFS_ENDPOINT_URL: "http://lakefs-dev:8000"
+      CHROMEDRIVER_PATH: "/usr/local/bin/chromedriver"
+    volumes:
+      - .:/home/prefect_user/app
+    depends_on:
+      - prefect-server
+      - lakefs-dev
+    networks:
+      - data_network
+    restart: unless-stopped
+
   jupyter:
     build:
       context: ./test-scraping
@@ -26,7 +64,7 @@ services:
       - ./test-scraping:/home/jovyan/work
     environment:
       JUPYTER_ENABLE_LAB: "yes"
-      LAKEFS_ENDPOINT_URL: "http://lakefs-dev:8000"  # Use the internal hostname for lakeFS
+      LAKEFS_ENDPOINT_URL: "http://lakefs-dev:8000"
     command: start-notebook.sh --NotebookApp.token='' --NotebookApp.notebook_dir='/home/jovyan/work'
     depends_on:
       - lakefs-dev
@@ -35,6 +73,7 @@ services:
 
 volumes:
   lakefs_data:
+  prefect_data:
 
 networks:
   data_network:

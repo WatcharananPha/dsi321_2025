@@ -32,3 +32,10 @@ RUN pip install --no-cache-dir --user -r requirements.txt && \
 ENV PATH="/home/prefect_user/.local/bin:${PATH}"
 
 COPY --chown=prefect_user:prefect_user . .
+
+RUN echo '#!/bin/bash\n\
+prefect config set PREFECT_API_URL="$PREFECT_API_URL"\n\
+cd /home/prefect_user/app\n\
+prefect deploy --all\n\
+exec "$@"' > /home/prefect_user/deploy.sh && \
+    chmod +x /home/prefect_user/deploy.sh
