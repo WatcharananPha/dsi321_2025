@@ -86,6 +86,16 @@ DSI321_2025/
     #mac-os
     pip install -r test_scraping\requirements.txt
     ```
+    - Activate the virtual environment
+    ```bash
+    #Windows config
+    source .venv/Scripts/activate
+    ```
+    ```bash
+    #mac-os
+    source .venv/bin/activate
+    ```
 
 ## Running Prefect
 
+- Create a deployment for build, push, and pull for building Docker images, pushing code to the Docker registry, and pulling code to run the flow.
