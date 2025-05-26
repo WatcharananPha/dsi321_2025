@@ -2,7 +2,7 @@
 
 ## Overview 
 
-สคริปต์ Python นี้ทำหน้าที่ดึงข้อมูลการผลิตไฟฟ้าแบบเรียลไทม์จากเว็บไซต์การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย (กฟผ.) ที่ URL `https://www.sothailand.com/sysgen/egat/` โดยใช้ Selenium ในการโต้ตอบกับหน้าเว็บ และดึงข้อมูลจาก Console Log ของเบราว์เซอร์ ซึ่งเป็นที่ที่เว็บไซต์อัปเดตข้อมูลแบบไดนามิก    สคริปต์ถูกออกแบบมาให้สามารถทำงานได้อย่างต่อเนื่อง เพื่อเก็บข้อมูลใหม่ตามช่วงเวลาที่กำหนด
+This Python script fetches real-time electricity production data from the Electricity Generating Authority of Thailand (EGAT) website at the URL `https://www.sothailand.com/sysgen/egat/` using Selenium to interact with the web page and pulls data from the browser's Console Log, where the website dynamically updates data. The script is designed to run continuously, capturing new data at specified intervals.
 
 ## Dataset Quality
 
@@ -14,7 +14,7 @@
 | No columns with data type 'object' | Ensures proper data typing | ✅ Passing |
 | No duplicate records | Confirms data uniqueness | ✅ Passing |
 
-- Dataset ('parquet\egat_realtime_power_history.parquet')
+- Dataset (`parquet\egat_realtime_power_history.parquet`)
 
 
 ## Project structure
