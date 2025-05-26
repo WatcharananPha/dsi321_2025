@@ -4,6 +4,20 @@
 
 This Python script fetches real-time electricity production data from the Electricity Generating Authority of Thailand (EGAT) website at the URL `https://www.sothailand.com/sysgen/egat/` using Selenium to interact with the web page and pulls data from the browser's Console Log, where the website dynamically updates data. The script is designed to run continuously, capturing new data at specified intervals.
 
+## Benefits
+
+- **Real-time Monitoring**: Captures live electricity production data directly from EGAT's systems, enabling immediate visibility into Thailand's power grid status.
+
+- **Automated Data Collection**: Eliminates manual data gathering by automatically scraping data at configurable intervals, ensuring consistent historical datasets.
+
+- **Predictive Analytics**: Powers forecasting models to predict electricity demand patterns, enabling better resource planning and optimization.
+
+- **Interactive Visualization**: Presents complex power generation data through an intuitive user interface, making insights accessible to both technical and non-technical users.
+
+- **Technical Innovation**: Leverages Selenium for dynamic content extraction from console logs, demonstrating an advanced web scraping approach for JavaScript-heavy websites.
+
+- **Historical Analysis**: Builds a comprehensive time-series dataset suitable for trend analysis and anomaly detection in power generation.
+
 ## Dataset Quality
 
 | Quality Check | Description | Status |
@@ -41,7 +55,37 @@ DSI321_2025/
 
 ## Resources
 
+- **Tools Used**
+    - **Web Scraping**: Python `webdriver_manager` `Selenium`
+    - **Data Validation**: `Pydantic`
+    - **Data Storage**: `lakeFS`
+    - **Orchestration**: `Prefect`
+    - **Visualization**: `Streamlit`
+    - **CI/CD**: GitHub Actions
+
+- **Hardware Requirements**
+    - Docker-compatible environment
+    - Local or cloud system with:
+        - At least 4 GB RAM
+        - Internet access for EGAT web
+        - Port availability for Prefect UI (default: `localhost:4200`)
+
 ## Prepare
+
+- **Setup Steps**
+    - Create a virtual environment
+    ```bash
+    python -m venv .venv
+    ```
+    - Install required packages
+    ```bash
+    #Windows config
+    pip install -r test_scraping\requirements.txt
+    ```
+    ```bash
+    #mac-os
+    pip install -r test_scraping\requirements.txt
+    ```
 
 ## Running Prefect
 
