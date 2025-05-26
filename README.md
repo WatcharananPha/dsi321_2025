@@ -99,3 +99,24 @@ DSI321_2025/
 ## Running Prefect
 
 - Create a deployment for build, push, and pull for building Docker images, pushing code to the Docker registry, and pulling code to run the flow.
+- **If there is a PREFECT_API_URL bug, run this script first.**
+    ```bash
+    #Windows config
+    $env:PREFECT_API_URL = "http://127.0.0.1:4200/api"
+    ```
+    ```bash
+    #mac-os
+    export PREFECT_API_URL="http://127.0.0.1:4200/api"
+    ```
+- Deployments allow you to run flows on a schedule and trigger runs based on events.
+    ```bash
+    prefect deploy
+    ```
+- Start Prefect Worker to start pulling jobs from the Work Pool and Work Queue.
+    ```bash
+    pefect worker start --pool 'default-agent-pool' --work-queue 'default'
+    ```
+- Run Streamlit UI
+    ```bash
+    streamlit run UI/streamlit_app.py
+    ```
